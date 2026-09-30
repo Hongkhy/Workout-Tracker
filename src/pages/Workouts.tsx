@@ -23,6 +23,18 @@ function Workouts() {
       filter === "All" || workout.kind === filterKinds[filter];
     return matchesQuery && matchesType;
   });
+  const totalMinutes = workouts.reduce(
+    (total, workout) => total + (Number.parseInt(workout.duration, 10) || 0),
+    0,
+  );
+  const totalCalories = workouts.reduce(
+    (total, workout) => total + (Number.parseInt(workout.calories, 10) || 0),
+    0,
+  );
+  const activeTime =
+    totalMinutes >= 60
+      ? `${Math.floor(totalMinutes / 60)}h ${totalMinutes % 60}m`
+      : `${totalMinutes} min`;
 
   return (
     <>
@@ -46,17 +58,17 @@ function Workouts() {
         <article className="page-stat">
           <span>Total sessions</span>
           <strong>{workouts.length}</strong>
-          <small>This week</small>
+          <small>Recorded workouts</small>
         </article>
         <article className="page-stat">
           <span>Time active</span>
-          <strong>6h 24m</strong>
-          <small>Across 4 activities</small>
+          <strong>{activeTime}</strong>
+          <small>Across all sessions</small>
         </article>
         <article className="page-stat">
           <span>Calories burned</span>
-          <strong>1,846</strong>
-          <small>↑ 12% vs. last week</small>
+          <strong>{totalCalories.toLocaleString()}</strong>
+          <small>Across all sessions</small>
         </article>
       </section>
       <section className="panel page-panel">
@@ -97,8 +109,14 @@ function Workouts() {
           <WorkoutRows workouts={filteredWorkouts} />
         ) : (
           <div className="empty-state">
-            <strong>No workouts found</strong>
-            <span>Try a different search or activity type.</span>
+            <strong>
+              {workouts.length ? "No workouts found" : "No workouts recorded"}
+            </strong>
+            <span>
+              {workouts.length
+                ? "Try a different search or activity type."
+                : "Log a workout to build your activity history."}
+            </span>
           </div>
         )}
       </section>

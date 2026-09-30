@@ -1,10 +1,6 @@
 import { useState } from "react";
 import {
   Check,
-  Dumbbell,
-  Flame,
-  Footprints,
-  HeartPulse,
   Trophy,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -20,41 +16,8 @@ type Goal = {
   color: string;
 };
 
-const initialGoals: Goal[] = [
-  {
-    id: 1,
-    title: "Move 10,000 steps",
-    detail: "Daily movement",
-    current: 8432,
-    target: 10000,
-    unit: "steps",
-    icon: Footprints,
-    color: "goal-green",
-  },
-  {
-    id: 2,
-    title: "Train 4 times",
-    detail: "Weekly workouts",
-    current: 3,
-    target: 4,
-    unit: "sessions",
-    icon: Dumbbell,
-    color: "goal-orange",
-  },
-  {
-    id: 3,
-    title: "Stay active for 7 hours",
-    detail: "Weekly active time",
-    current: 6,
-    target: 7,
-    unit: "hours",
-    icon: Flame,
-    color: "goal-blue",
-  },
-];
-
 function Goals() {
-  const [goals, setGoals] = useState(initialGoals);
+  const [goals, setGoals] = useState<Goal[]>([]);
   const [reminders, setReminders] = useState(true);
   const completedCount = goals.filter(
     (goal) => goal.current >= goal.target,
@@ -97,16 +60,26 @@ function Goals() {
         <div>
           <p className="panel-kicker">THIS WEEK</p>
           <strong>
-            {completedCount} of {goals.length} goals completed
+            {goals.length
+              ? `${completedCount} of ${goals.length} goals completed`
+              : "No goals yet"}
           </strong>
-          <span>Keep going, Jamie. Your consistency is adding up.</span>
+          <span>Your completed goals will appear here.</span>
         </div>
         <div className="goals-summary-score">
-          {Math.round((completedCount / goals.length) * 100)}
+          {goals.length
+            ? Math.round((completedCount / goals.length) * 100)
+            : 0}
           <small>%</small>
         </div>
       </section>
       <section className="goals-page-grid">
+        {!goals.length && (
+          <div className="empty-state">
+            <strong>No goals yet</strong>
+            <span>Goals will appear here when they are added.</span>
+          </div>
+        )}
         {goals.map((goal) => {
           const Icon = goal.icon;
           const percent = Math.min(
@@ -160,18 +133,6 @@ function Goals() {
             </article>
           );
         })}
-      </section>
-      <section className="goal-encouragement">
-        <span>
-          <HeartPulse size={17} />
-        </span>
-        <div>
-          <strong>Rest is part of the plan, too.</strong>
-          <small>
-            Recovery helps you come back stronger. Your weekly goals leave room
-            for it.
-          </small>
-        </div>
       </section>
     </>
   );

@@ -64,7 +64,7 @@ function LandingPage() {
                   <input
                     autoComplete="name"
                     name="name"
-                    placeholder="Jamie Davis"
+                    placeholder="Your name"
                     required
                   />
                 </label>

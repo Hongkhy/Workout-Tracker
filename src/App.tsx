@@ -20,7 +20,6 @@ import {
   Settings as SettingsIcon,
   Target,
   TrendingUp,
-  Trophy,
   X,
 } from "lucide-react";
 import Dashboard from "./pages/Dashboard";
@@ -51,33 +50,6 @@ const pageNames: Record<string, string> = {
   "/settings": "Settings",
 };
 
-const initialWorkouts: Workout[] = [
-  {
-    name: "Morning run",
-    detail: "Outdoor · 5.2 km",
-    time: "Today, 7:15 AM",
-    duration: "32 min",
-    calories: "286",
-    kind: "run",
-  },
-  {
-    name: "Full body strength",
-    detail: "Strength · Upper body",
-    time: "Yesterday, 6:30 PM",
-    duration: "45 min",
-    calories: "342",
-    kind: "strength",
-  },
-  {
-    name: "Easy recovery ride",
-    detail: "Cycling · Indoor",
-    time: "Mon, 5:45 PM",
-    duration: "28 min",
-    calories: "218",
-    kind: "ride",
-  },
-];
-
 function PageOutlet({ context }: { context: AppOutletContext }) {
   return (
     <div className="dashboard-content">
@@ -88,13 +60,15 @@ function PageOutlet({ context }: { context: AppOutletContext }) {
 
 function App() {
   const location = useLocation();
-  const [workouts, setWorkouts] = useState(initialWorkouts);
+  const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [showWorkoutForm, setShowWorkoutForm] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [workoutName, setWorkoutName] = useState("");
   const [workoutType, setWorkoutType] = useState<WorkoutType>("Strength");
+  const [workoutDuration, setWorkoutDuration] = useState("");
+  const [workoutCalories, setWorkoutCalories] = useState("");
   const [toast, setToast] = useState("");
   const normalizedPath = location.pathname.replace(/\/$/, "") || "/";
   const pageTitle = pageNames[normalizedPath] ?? "Dashboard";
@@ -106,10 +80,10 @@ function App() {
     setWorkouts((current) => [
       {
         name: workoutName.trim(),
-        detail: `${workoutType} · Just added`,
-        time: "Today, just now",
-        duration: "30 min",
-        calories: "240",
+        detail: workoutType,
+        time: new Date().toLocaleString(),
+        duration: `${workoutDuration} min`,
+        calories: workoutCalories,
         kind:
           workoutType === "Cycling"
             ? "ride"
@@ -120,8 +94,10 @@ function App() {
       ...current,
     ]);
     setWorkoutName("");
+    setWorkoutDuration("");
+    setWorkoutCalories("");
     setShowWorkoutForm(false);
-    setToast("Workout added to your activity");
+    setToast("Workout added");
     window.setTimeout(() => setToast(""), 2800);
   }
 
@@ -181,22 +157,6 @@ function App() {
           <span>Settings</span>
         </NavLink>
         <div className="sidebar-spacer" />
-        <div className="coach-card">
-          <div className="coach-icon">
-            <Trophy size={18} />
-          </div>
-          <strong>
-            Small steps,
-            <br />
-            big progress.
-          </strong>
-          <p>You’re on a 5-day streak. Keep it going!</p>
-          <div className="streak-dots" aria-label="Five day streak">
-            {[1, 2, 3, 4, 5, 6, 7].map((day) => (
-              <span className={day <= 5 ? "dot-done" : ""} key={day} />
-            ))}
-          </div>
-        </div>
         <button className="help-link" type="button">
           <span className="help-mark">?</span> Help & support
         </button>
@@ -229,12 +189,10 @@ function App() {
                 }}
               >
                 <Bell size={18} />
-                <i />
               </button>
               {showNotifications && (
                 <div className="popover notification-popover">
-                  <strong>You’re all caught up</strong>
-                  <span>Your next workout is tomorrow at 7:00 AM.</span>
+                  <strong>No notifications</strong>
                 </div>
               )}
             </div>
@@ -247,17 +205,16 @@ function App() {
                   setShowNotifications(false);
                 }}
               >
-                <span className="avatar">JD</span>
+                <span className="avatar">?</span>
                 <span className="profile-copy">
-                  <strong>Jamie Davis</strong>
-                  <small>Free plan</small>
+                  <strong>Account</strong>
+                  <small>Profile</small>
                 </span>
                 <ChevronDown size={15} />
               </button>
               {showProfile && (
                 <div className="popover profile-popover">
-                  <strong>Jamie Davis</strong>
-                  <span>jamie.davis@email.com</span>
+                  <strong>Account</strong>
                   <NavLink onClick={() => setShowProfile(false)} to="/settings">
                     Account settings
                   </NavLink>
@@ -304,7 +261,7 @@ function App() {
             <p className="panel-kicker">A LITTLE PROGRESS ADDS UP</p>
             <h2>Log a workout</h2>
             <p className="modal-copy">
-              Add a session to your activity for today.
+              Enter the details for this session.
             </p>
             <label htmlFor="workout-name">Workout name</label>
             <input
@@ -327,6 +284,24 @@ function App() {
               <option>Running</option>
               <option>Cycling</option>
             </select>
+            <label htmlFor="workout-duration">Duration (minutes)</label>
+            <input
+              id="workout-duration"
+              min="1"
+              required
+              type="number"
+              value={workoutDuration}
+              onChange={(event) => setWorkoutDuration(event.target.value)}
+            />
+            <label htmlFor="workout-calories">Calories burned</label>
+            <input
+              id="workout-calories"
+              min="0"
+              required
+              type="number"
+              value={workoutCalories}
+              onChange={(event) => setWorkoutCalories(event.target.value)}
+            />
             <div className="modal-actions">
               <button
                 className="cancel-button"

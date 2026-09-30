@@ -74,10 +74,12 @@ function Settings() {
               </div>
             </div>
             <div className="profile-edit-row">
-              <span className="avatar profile-avatar-large">JD</span>
+              <span className="setting-icon profile-avatar-large">
+                <UserRound size={20} />
+              </span>
               <span>
-                <strong>Jamie Davis</strong>
-                <small>jamie.davis@email.com</small>
+                <strong>Profile</strong>
+                <small>No account details available</small>
               </span>
               <button
                 className="cancel-button"
@@ -91,14 +93,14 @@ function Settings() {
               <label>
                 Display name
                 <input
-                  defaultValue="Jamie Davis"
+                  placeholder="Your name"
                   onChange={() => setSaved(false)}
                 />
               </label>
               <label>
                 Email address
                 <input
-                  defaultValue="jamie.davis@email.com"
+                  placeholder="you@example.com"
                   onChange={() => setSaved(false)}
                 />
               </label>
